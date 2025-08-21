@@ -87,6 +87,7 @@ def run_scratch():
             print(f"Scratch connection failed: {e}, retrying in 7s...")
             time.sleep(7)
 
+
 if __name__ == "__main__":
     # Start Scratch bot in background thread
     threading.Thread(target=run_scratch, daemon=True).start()
