@@ -4,17 +4,6 @@ import requests
 import json
 from flask import Flask
 
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Online!"
-
-if __name__ == "__main__":
-    port = 1000  # default 10000 if PORT not set
-    app.run(host="0.0.0.0", port=port)
-
-
 airesponse = ""
 
 def ai(prompt):
@@ -112,3 +101,15 @@ def on_set(var):
 print("Connected! Listening for cloud changes...")
 while True:
     time.sleep(1)
+
+
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Online!"
+
+if __name__ == "__main__":
+    port = 1000  # default 10000 if PORT not set
+    app.run(host="0.0.0.0", port=port)
