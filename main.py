@@ -4,6 +4,7 @@ import requests
 import json
 from flask import Flask
 import threading
+import os
 
 airesponse = ""
 
@@ -98,7 +99,8 @@ def home():
     return "Online!"
 
 def run_flask():
-    app.run(host="0.0.0.0", port=1000)
+    port = int(os.environ.get("PORT", 10000))  # use Render's PORT or fallback
+    app.run(host="0.0.0.0", port=port)
 
 # Start Flask in a separate thread
 flask_thread = threading.Thread(target=run_flask)
