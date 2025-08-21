@@ -3,6 +3,7 @@ import time
 import requests
 import json
 from flask import Flask
+import threading
 
 airesponse = ""
 
@@ -89,15 +90,20 @@ PROJECT_ID = 1207243603
 session = ScratchSession(USERNAME, PASSWORD)
 conn = session.create_cloud_connection(PROJECT_ID)
 
+# --- Flask setup ---
 app = Flask(__name__)
 
 @app.route('/')
 def home():
     return "Online!"
 
-if __name__ == "__main__":
-    port = 1000  # default 10000 if PORT not set
-    app.run(host="0.0.0.0", port=port)
+def run_flask():
+    app.run(host="0.0.0.0", port=1000)
+
+# Start Flask in a separate thread
+flask_thread = threading.Thread(target=run_flask)
+flask_thread.daemon = True
+flask_thread.start()
 
 @conn.on("set")
 def on_set(var):
