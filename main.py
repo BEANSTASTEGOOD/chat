@@ -89,6 +89,16 @@ PROJECT_ID = 1207243603
 session = ScratchSession(USERNAME, PASSWORD)
 conn = session.create_cloud_connection(PROJECT_ID)
 
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Online!"
+
+if __name__ == "__main__":
+    port = 1000  # default 10000 if PORT not set
+    app.run(host="0.0.0.0", port=port)
+
 @conn.on("set")
 def on_set(var):
     if var.name == "☁ CHAT_INPUT":
@@ -101,15 +111,3 @@ def on_set(var):
 print("Connected! Listening for cloud changes...")
 while True:
     time.sleep(1)
-
-
-
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Online!"
-
-if __name__ == "__main__":
-    port = 1000  # default 10000 if PORT not set
-    app.run(host="0.0.0.0", port=port)
