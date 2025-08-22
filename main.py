@@ -43,7 +43,7 @@ def encode(text):
             continue
         encoded += "0" + str(SPRITES.index(char) + 1)
     encoded += "0"
-    return encoded[:240] + "00920920920" if len(encoded) > 240 else encoded
+    return encoded[:240] + encode("... ") if len(encoded) > 240 else encoded
 
 def decode(text):
     decoded, i = "", 0
