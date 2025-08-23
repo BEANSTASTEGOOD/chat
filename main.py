@@ -64,28 +64,38 @@ USERNAME = "roglog"
 PASSWORD = "sebastian"
 PROJECT_ID = 1207243603
 
+import time, threading
+
+last_message = time.time()
+
 def run_scratch():
+    global last_message
     while True:
         try:
+            print("Connecting to Scratch...")
             session = ScratchSession(USERNAME, PASSWORD)
             conn = session.create_cloud_connection(PROJECT_ID)
 
             @conn.on("set")
             def on_set(var):
+                global last_message
+                last_message = time.time()
                 if var.name == "☁ CHAT_INPUT":
                     decoded = decode(var.value)
                     print("Got:", decoded)
                     aires = ai(decoded)
-                    print("Test:", aires)
                     conn.set_cloud_variable("☁ CHAT_OUTPUT", encode(aires))
 
-            print("Connected! Listening for cloud changes...")
+            print("Connected! Listening...")
             while True:
                 time.sleep(1)
-
+                # Check if no events for 10 minutes
+                if time.time() - last_message > 600:
+                    raise Exception("No activity, reconnecting...")
         except Exception as e:
-            print(f"Scratch connection failed: {e}, retrying in 7s...")
-            time.sleep(7)
+            print(f"Scratch connection failed: {e}")
+            time.sleep(5)
+
 
 
 if __name__ == "__main__":
