@@ -69,33 +69,33 @@ import time, threading
 last_message = time.time()
 
 def run_scratch():
-    global last_message
-    while True:
+    while True:  # keep trying forever
         try:
             print("Connecting to Scratch...")
             session = ScratchSession(USERNAME, PASSWORD)
             conn = session.create_cloud_connection(PROJECT_ID)
 
-            @conn.on("set")
             def on_set(var):
-                global last_message
-                last_message = time.time()
                 if var.name == "☁ CHAT_INPUT":
                     decoded = decode(var.value)
                     print("Got:", decoded)
                     aires = ai(decoded)
-                    conn.set_cloud_variable("☁ CHAT_OUTPUT", encode(aires))
+                    print("AI:", aires)
+                    try:
+                        conn.set_cloud_variable("☁ CHAT_OUTPUT", encode(aires))
+                    except Exception as e:
+                        print("Failed to send to Scratch:", e)
+                        raise  # force reconnect
 
-            print("Connected! Listening...")
+            conn.on("set", on_set)
+
+            print("Connected! Listening for cloud changes...")
             while True:
                 time.sleep(1)
-                # Check if no events for 10 minutes
-                if time.time() - last_message > 600:
-                    raise Exception("No activity, reconnecting...")
         except Exception as e:
             print(f"Scratch connection failed: {e}")
+            print("Reconnecting in 5s...")
             time.sleep(5)
-
 
 
 if __name__ == "__main__":
