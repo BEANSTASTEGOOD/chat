@@ -90,8 +90,20 @@ def run_scratch():
             conn.on("set", on_set)
 
             print("Connected! Listening for cloud changes...")
+
+            # --- watchdog loop ---
+            last_ping = time.time()
             while True:
-                time.sleep(1)
+                time.sleep(5)
+
+                # if the websocket thread has died, _ws.sock will be None
+                if not conn._ws or not conn._ws.connected:
+                    raise Exception("Scratch cloud connection lost")
+
+                # (optional) timeout if no events seen for 10+ minutes
+                if time.time() - last_ping > 600:
+                    raise Exception("No cloud activity, forcing reconnect")
+
         except Exception as e:
             print(f"Scratch connection failed: {e}")
             print("Reconnecting in 5s...")
